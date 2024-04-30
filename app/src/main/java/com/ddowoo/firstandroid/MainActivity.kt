@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.ddowoo.firstandroid.ui.theme.FirstAndroidTheme
+import kotlin.math.roundToInt
 
 // Activity = 앱 실행시 화면에 보이는 전체
 class MainActivity : ComponentActivity() {
@@ -85,18 +86,28 @@ fun Header(modifier: Modifier = Modifier){
     ){
         var inputValue by remember { mutableStateOf("") }
         var outputValue by remember { mutableStateOf("") }
-        var inputUnit by remember { mutableStateOf("Centimeters") }
+        var inputUnit by remember { mutableStateOf("Meters") }
         var outputUnit by remember { mutableStateOf("Meters") }
         var isInOpened by remember { mutableStateOf(false) }
         var isOutOpened by remember { mutableStateOf(false) }
-        var conversionFactor by remember { mutableStateOf(false) }
+        var conversionFactor = remember { mutableStateOf(1.00) }
+        var oConversionFactor = remember { mutableStateOf(1.00) }
+
+        fun convertUnits (){
+
+            // ?: elvis operator js의 ?? 와 같은 역할
+            val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
+            val result = (inputValueDouble * conversionFactor.value * 100.0 / oConversionFactor.value).roundToInt() / 100.0
+            outputValue = result.toString();
+        }
+
 
 
         Text("Unit Converter")
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(value = inputValue, onValueChange = {
             inputValue = it
-            outputValue = it
+            convertUnits()
         })
         Spacer(modifier = Modifier.height(16.dp))
         Row (
@@ -105,7 +116,7 @@ fun Header(modifier: Modifier = Modifier){
                 Button(onClick = {
                     isInOpened = !isInOpened
                 }) {
-                    Text("Selecct")
+                    Text(inputUnit)
                     // contentDescription 접근성 설명
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
                 }
@@ -116,43 +127,88 @@ fun Header(modifier: Modifier = Modifier){
                     DropdownMenuItem(
                         text = { Text("Centimeters") },
                         onClick = {
+                            isInOpened = false
                             inputUnit = "Centimeters"
+                            conversionFactor.value = 0.01
+                            convertUnits()
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("Meters") },
                         onClick = {
+                            isInOpened = false
                             inputUnit = "Meters"
+                            conversionFactor.value = 1.0
+                            convertUnits()
                         }
                     )
                     DropdownMenuItem(
                         text = { Text("Feet") },
                         onClick = {
+                            isInOpened = false
                             inputUnit = "Feet"
+                            conversionFactor.value = 0.3048
+                            convertUnits()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Milimeters") },
+                        onClick = {
+                            isInOpened = false
+                            inputUnit = "Milimeters"
+                            conversionFactor.value = 0.001
+                            convertUnits()
                         }
                     )
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
             Box{
-                Button(onClick = { /*TODO*/ }) {
-                    Text("Selecct")
+                Button(onClick = {
+                    isOutOpened = !isOutOpened
+                }) {
+                    Text(outputUnit)
                     // contentDescription 접근성 설명
                     Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
                 }
                 // expanded = false 초기 닫아두기
-                DropdownMenu(expanded = false, onDismissRequest = { /*TODO*/ }) {
+                DropdownMenu(expanded = isOutOpened, onDismissRequest = { /*TODO*/ }) {
                     DropdownMenuItem(
                         text = { Text("Centimeters") },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutOpened = false
+                            outputUnit = "Centimeters"
+                            oConversionFactor.value = 0.01
+                            convertUnits()
+
+                        }
                     )
                     DropdownMenuItem(
                         text = { Text("Meters") },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutOpened = false
+                            outputUnit = "Meters"
+                            oConversionFactor.value = 1.00
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = { Text("Feet") },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutOpened = false
+                            outputUnit = "Feet"
+                            oConversionFactor.value = 0.3048
+                            convertUnits()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Milimeters") },
+                        onClick = {
+                            isOutOpened = false
+                            inputUnit = "Milimeters"
+                            oConversionFactor.value = 0.001
+                            convertUnits()
+                        }
                     )
                 }
             }
@@ -160,8 +216,9 @@ fun Header(modifier: Modifier = Modifier){
 
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Result : " + outputValue)
-
+        Text("Result : " + outputValue + " " + outputUnit,
+            style = MaterialTheme.typography.headlineMedium
+        )
     }
 }
 
