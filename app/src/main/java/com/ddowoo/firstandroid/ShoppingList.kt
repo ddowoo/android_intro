@@ -63,6 +63,10 @@ fun ShoppingListApp (modifier: Modifier = Modifier){
             shoppingList = shoppingList.filter { it != item }
         }
 
+        fun updateShoppingListItem(index: Int, newItem: ShoppingItem) {
+            shoppingList = shoppingList.toMutableList().also { it[index] = newItem }
+        }
+
         Button(
             onClick = {
                 showDialog = true
@@ -74,7 +78,14 @@ fun ShoppingListApp (modifier: Modifier = Modifier){
 
 
         if (editItem != null) {
-            EditShoppingItem(editItem!!)
+            EditShoppingItem(
+                editItem!!,
+                {  modifiedItem ->
+                    updateShoppingListItem(shoppingList.indexOf(editItem), modifiedItem)
+                    editItem = null
+                } ,
+                { editItem = null }
+            )
         }
 
 
@@ -194,26 +205,62 @@ fun ShoppingListItem (
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditShoppingItem(item: ShoppingItem){
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        TextField(
-            value = item.name,
-            onValueChange = {item.name = it},
+fun EditShoppingItem(
+        item: ShoppingItem,
+        onEditClick: (ShoppingItem)-> Unit,
+        onCancelClick: ()-> Unit,
+    ){
+
+        var name by remember { mutableStateOf(item.name) }
+        var quantity by remember { mutableStateOf(item.quantity) }
+
+        Column(
             modifier = Modifier
-                .background(
-                    Color.White
-                )
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-            )
+                .fillMaxWidth()
+                .padding(16.dp)
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        TextField(value = item.quantity.toString(), onValueChange = {item.quantity = it.toInt()}, modifier = Modifier.background(
-            Color.White
-        ))
-    }
+        {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                TextField(
+                    value = name,
+                    onValueChange = {name = it},
+                    modifier = Modifier
+                        .background(Color.White)
+                        .weight(5f),
+                    colors = TextFieldDefaults.textFieldColors(
+                    )
+                )
+                Spacer(modifier = Modifier
+                    .width(4.dp)
+                )
+                TextField(
+                    value = quantity.toString(),
+                    onValueChange = {quantity = it.toInt()},
+                    modifier = Modifier
+                        .background(Color.White)
+                        .weight(5f),
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(onClick = {
+                    onEditClick(ShoppingItem(item.id, name, quantity))
+                }) {
+                    Text("수정")
+                }
+                Button(onClick = {
+                    onCancelClick()
+                }) {
+                    Text("취소")
+                }
+            }
+        }
+
 }
