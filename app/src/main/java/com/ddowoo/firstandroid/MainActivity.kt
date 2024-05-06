@@ -56,8 +56,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // 단위 계산기
                     // UnitCalc()
-                    ShoppingListApp()
-
+                    //
+                    // ShoppingListApp()
+                    // 카운터
+                    Counter()
                 }
 
 
@@ -66,10 +68,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-// @Preview 애플리케이션을 실행하지 않고 화면이 바뀌는지 확인할 수 있음
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-//    Header()
-}
