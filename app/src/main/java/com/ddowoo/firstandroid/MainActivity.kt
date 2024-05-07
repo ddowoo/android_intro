@@ -3,11 +3,13 @@ package com.ddowoo.firstandroid
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
+import com.ddowoo.firstandroid.Counter.Counter
+import com.ddowoo.firstandroid.Counter.CounterViewModel
 import com.ddowoo.firstandroid.ui.theme.FirstAndroidTheme
 
 // Activity = 앱 실행시 화면에 보이는 전체
@@ -17,6 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+            val viewModel: CounterViewModel = ViewModelProvider(this)[CounterViewModel::class.java]
 
             FirstAndroidTheme {
                 // Surface는 백그라운드를 위한것 (Activity)
@@ -29,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     //
                     // ShoppingListApp()
                     // 카운터
-                    Counter()
+                    Counter(viewModel)
                 }
 
 
