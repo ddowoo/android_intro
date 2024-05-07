@@ -1,6 +1,6 @@
 package com.ddowoo.firstandroid
 
-class BaseSecondClass:BaseClass() {
+open class BaseSecondClass:BaseClass() {
 
 
     //
